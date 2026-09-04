@@ -444,8 +444,8 @@
   const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 520);
   const MAP_LIFT = 5.2;
   function wy(y) { return MAP_LIFT + (y || 0); }
-  const CAM0 = { x: 14, y: 16.5, z: 28 };
-  const CAM_TARGET = { x: 0, y: MAP_LIFT + 0.35, z: 6 };
+  const CAM0 = { x: 18, y: 19, z: 36 };
+  const CAM_TARGET = { x: 0, y: MAP_LIFT + 0.25, z: 4 };
   camera.position.set(CAM0.x, CAM0.y, CAM0.z);
   camera.lookAt(CAM_TARGET.x, CAM_TARGET.y, CAM_TARGET.z);
 
@@ -1027,7 +1027,11 @@
     invadeBeacon.scale.set(0.28, 4.0, 0.28);
     scene.add(invadeBeacon);
 
-    [0.03, 0.065, 0.105, 0.15, 0.20, 0.26].forEach(function (u) {
+    const spawnGlow = new THREE.PointLight(0xff4d9a, 0.55, 14, 2);
+    spawnGlow.position.set(a.x, wy(2.4), a.z);
+    scene.add(spawnGlow);
+
+    [0.03, 0.07, 0.12, 0.18, 0.26, 0.36, 0.48].forEach(function (u) {
       const p = pathData.curve.getPoint(u);
       const tan = pathData.curve.getTangent(u);
       const chev = new THREE.Mesh(GEO.cone, chevMat);
