@@ -66,6 +66,16 @@
   #money i { color: #ffd54a; }
   #lives i { color: #ff6b7d; }
   #wave i  { color: #6ed2ff; }
+  #wave.invading {
+    border-color: rgba(255, 90, 138, 0.75);
+    box-shadow: 0 0 0 2px rgba(255, 77, 154, 0.28), 0 0 18px rgba(255, 77, 154, 0.22);
+    color: #ffe0ec;
+  }
+  #wave.invading i { color: #ff6b9a; }
+  #wave.ready {
+    border-color: rgba(61, 224, 255, 0.45);
+    box-shadow: 0 0 0 2px rgba(61, 224, 255, 0.16);
+  }
 
   #controlsHud {
     position: fixed; top: calc(10px + var(--safe-top)); right: calc(10px + var(--safe-right));
@@ -143,6 +153,67 @@
     text-align: center; white-space: normal;
   }
   #placeHint.show { display: block; }
+
+  #btnUnselect {
+    position: fixed;
+    left: calc(10px + var(--safe-left));
+    bottom: calc(12px + var(--safe-bottom));
+    z-index: 66;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+    min-width: 136px;
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 213, 74, 0.55);
+    background: rgba(18, 14, 32, 0.88);
+    color: #ffe27a;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(255, 213, 74, 0.16);
+  }
+  #btnUnselect.show { display: flex; }
+  #btnUnselect:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) {
+    #btnUnselect:hover {
+      background: rgba(255, 213, 74, 0.22);
+      border-color: #ffd54a;
+    }
+  }
+
+  #invadeBanner {
+    position: fixed;
+    top: calc(62px + var(--safe-top));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 55;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffe4ee;
+    pointer-events: none;
+    border: 1px solid rgba(255, 90, 138, 0.7);
+    background: linear-gradient(90deg, rgba(48, 8, 28, 0.88), rgba(16, 18, 40, 0.86));
+    box-shadow: 0 0 22px rgba(255, 77, 154, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    animation: invadePulse 1.05s ease-in-out infinite;
+  }
+  #invadeBanner.show { display: flex; }
+  #invadeBanner i { color: #ff6b9a; filter: drop-shadow(0 0 8px #ff4d9a); }
+  @keyframes invadePulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(255, 77, 154, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+    50% { box-shadow: 0 0 28px rgba(61, 224, 255, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+  }
 
   #mobileTip {
     position: fixed; left: calc(10px + var(--safe-left));
@@ -256,6 +327,26 @@
       max-height: 38vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     #placeHint, #mobileTip { bottom: calc(128px + var(--safe-bottom)); }
+    #btnUnselect {
+      left: calc(8px + var(--safe-left));
+      bottom: auto;
+      top: calc(104px + var(--safe-top));
+      min-height: 52px;
+      min-width: 148px;
+      font-size: 16px;
+      padding: 12px 18px;
+    }
+    #invadeBanner {
+      top: calc(58px + var(--safe-top));
+      left: calc(8px + var(--safe-left));
+      transform: none;
+      font-size: 14px;
+      letter-spacing: 1px;
+      min-height: 40px;
+      max-width: calc(100vw - 88px - var(--safe-left) - var(--safe-right));
+      padding-left: 12px;
+      padding-right: 12px;
+    }
     .overlay-card { padding: 24px 22px; max-width: min(420px, calc(100vw - 24px)); }
     .overlay-card h1 { font-size: 26px; }
     .overlay { align-items: flex-end; padding-bottom: calc(28px + var(--safe-bottom)); }
@@ -280,6 +371,8 @@
   <div class="stat-box" id="lives"><i class="fas fa-heart"></i><span>20</span></div>
   <div class="stat-box" id="wave"><i class="fas fa-flag"></i><span>第 0 波</span></div>
 </div>
+<div id="invadeBanner" class="hud-panel" aria-live="polite"><i class="fas fa-skull"></i><span>敵人進攻中</span></div>
+<button type="button" id="btnUnselect" class="hud-panel" title="取消選擇" aria-label="取消選擇"><i class="fas fa-times"></i>取消選擇</button>
 
 <div id="controlsHud" class="hud-panel" style="padding:10px;">
   <div class="ctrl-btn" id="btnStartWave" title="開始波次"><i class="fas fa-play"></i></div>
@@ -287,7 +380,7 @@
   <div class="ctrl-btn" id="btnResetCam" title="重置視角"><i class="fas fa-camera"></i></div>
 </div>
 
-<div id="placeHint" class="hud-panel">輕點空地放置 · 拖曳旋轉視角 · Esc 取消</div>
+<div id="placeHint" class="hud-panel">輕點空地放置 · 拖曳旋轉視角 · 取消選擇 / Esc</div>
 <div id="mobileTip" class="hud-panel">單指拖曳旋轉視角 · 雙指捏合縮放 · 輕點空地放置／選塔
   <button type="button" id="btnDismissTip">知道了</button>
 </div>
@@ -299,6 +392,7 @@
   <button class="upg-btn" id="upgA">攻擊力 A</button>
   <button class="upg-btn" id="upgB">射速+射程 B</button>
   <button class="upg-btn sell" id="upgSell">出售</button>
+  <button class="upg-btn" id="upgUnselect">取消選擇</button>
 </div>
 
 <div id="tooltip" class="hud-panel"></div>
@@ -348,9 +442,12 @@
   scene.fog = new THREE.FogExp2(FOG_COLOR, 0.0088);
 
   const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 520);
+  const MAP_LIFT = 3.6;
+  function wy(y) { return MAP_LIFT + (y || 0); }
   const CAM0 = { x: 20, y: 24, z: 36 };
+  const CAM_TARGET = { x: 0, y: MAP_LIFT, z: -2 };
   camera.position.set(CAM0.x, CAM0.y, CAM0.z);
-  camera.lookAt(0, 0, -2);
+  camera.lookAt(CAM_TARGET.x, CAM_TARGET.y, CAM_TARGET.z);
 
   const hemiLight = new THREE.HemisphereLight(0xffb07a, 0x12182a, 0.58);
   scene.add(hemiLight);
@@ -395,10 +492,10 @@
   controls.maxDistance = 110;
   controls.maxPolarAngle = Math.PI / 2.05;
   controls.minPolarAngle = Math.PI / 7;
-  controls.target.set(0, 0, -2);
   controls.enablePan = true;
   controls.rotateSpeed = 0.72;
   controls.zoomSpeed = 0.85;
+  controls.target.set(CAM_TARGET.x, CAM_TARGET.y, CAM_TARGET.z);
   if (THREE.TOUCH) {
     controls.touches.ONE = THREE.TOUCH.ROTATE;
     controls.touches.TWO = THREE.TOUCH.DOLLY_PAN;
@@ -473,6 +570,7 @@
   });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
+  ground.position.y = wy(0);
   ground.receiveShadow = true;
   scene.add(ground);
 
@@ -525,15 +623,15 @@
   }
   function buildPathMesh() {
     const curve = new THREE.CatmullRomCurve3(PATH, false, 'catmullrom', 0.2);
-    const walk = ribbonAlong(curve, 2.55, 0.05, 180, new THREE.MeshStandardMaterial({
+    const walk = ribbonAlong(curve, 2.55, wy(0.05), 180, new THREE.MeshStandardMaterial({
       color: 0x9a958c, roughness: 0.88, metalness: 0.04
     }));
     scene.add(walk);
-    const road = ribbonAlong(curve, 2.15, 0.09, 180, new THREE.MeshStandardMaterial({
+    const road = ribbonAlong(curve, 2.15, wy(0.09), 180, new THREE.MeshStandardMaterial({
       color: 0x2a2e36, roughness: 0.94, metalness: 0.05
     }));
     scene.add(road);
-    scene.add(ribbonAlong(curve, 0.05, 0.11, 140, new THREE.MeshStandardMaterial({
+    scene.add(ribbonAlong(curve, 0.05, wy(0.11), 140, new THREE.MeshStandardMaterial({
       color: 0xffd54a, roughness: 0.4, metalness: 0.08, emissive: 0x664400, emissiveIntensity: 0.4
     })));
     return { mesh: road, curve: curve };
@@ -631,7 +729,7 @@
   }
   function addBox(x, y, z, w, h, d, mat, shadow) {
     const m = new THREE.Mesh(GEO.box, mat);
-    m.position.set(x, y, z);
+    m.position.set(x, wy(y), z);
     m.scale.set(w, h, d);
     m.castShadow = shadow !== false;
     m.receiveShadow = true;
@@ -642,7 +740,7 @@
     const m = new THREE.Mesh(GEO.box, new THREE.MeshStandardMaterial({
       color: color, emissive: color, emissiveIntensity: 0.95, roughness: 0.25, metalness: 0.2
     }));
-    m.position.set(x, y, z);
+    m.position.set(x, wy(y), z);
     m.scale.set(0.12, h, 0.12);
     scene.add(m);
     return m;
@@ -691,11 +789,11 @@
     })
   );
   waterBase.rotation.x = -Math.PI / 2;
-  waterBase.position.y = -0.72;
+  waterBase.position.y = wy(-0.72);
   scene.add(waterBase);
   const water = new THREE.Mesh(new THREE.PlaneGeometry(240, 240, 64, 64), waterMat);
   water.rotation.x = -Math.PI / 2;
-  water.position.y = -0.48;
+  water.position.y = wy(-0.48);
   scene.add(water);
 
   const skyMat = new THREE.ShaderMaterial({
@@ -726,7 +824,7 @@
   const railNeon = new THREE.Mesh(GEO.box, new THREE.MeshStandardMaterial({
     color: 0x3de0ff, emissive: 0x3de0ff, emissiveIntensity: 0.8, roughness: 0.3
   }));
-  railNeon.position.set(0, 1.05, 40.75);
+  railNeon.position.set(0, wy(1.05), 40.75);
   railNeon.scale.set(78, 0.08, 0.08);
   scene.add(railNeon);
 
@@ -736,7 +834,7 @@
       const t = (i / (count - 1) - 0.5) * spread;
       const h = hBase * (0.55 + hash2(i, cz) * 0.7);
       const peak = new THREE.Mesh(GEO.cone, mat);
-      peak.position.set(cx + t + (hash2(i, 3) - 0.5) * 4, h * 0.45, cz + (hash2(i, 7) - 0.5) * 5);
+      peak.position.set(cx + t + (hash2(i, 3) - 0.5) * 4, wy(h * 0.45), cz + (hash2(i, 7) - 0.5) * 5);
       peak.scale.set(4.5 + hash2(i, 2) * 3, h, 4.5 + hash2(i, 4) * 2.5);
       scene.add(peak);
     }
@@ -782,7 +880,7 @@
     const yaw = Math.atan2(dir.x, dir.z);
     for (let i = 0; i < 6; i++) {
       const s = new THREE.Mesh(GEO.box, zebraMat);
-      s.position.set(at.x + dir.x * (i - 2.5) * 0.38, 0.14, at.z + dir.z * (i - 2.5) * 0.38);
+      s.position.set(at.x + dir.x * (i - 2.5) * 0.38, wy(0.14), at.z + dir.z * (i - 2.5) * 0.38);
       s.scale.set(3.7, 0.035, 0.2);
       s.rotation.y = yaw;
       scene.add(s);
@@ -797,7 +895,7 @@
     if (idx % 2) return;
     const m = new THREE.Mesh(GEO.cyl, bollardMat);
     m.scale.set(0.08, 0.32, 0.08);
-    m.position.set(p.x + (idx % 4 ? 2.15 : -2.15), 0.22, p.z);
+    m.position.set(p.x + (idx % 4 ? 2.15 : -2.15), wy(0.22), p.z);
     m.castShadow = true;
     scene.add(m);
   });
@@ -810,16 +908,16 @@
     const side = idx % 2 ? 2.6 : -2.6;
     const pole = new THREE.Mesh(GEO.cyl, lampMat);
     pole.scale.set(0.07, 2.4, 0.07);
-    pole.position.set(p.x + side, 1.2, p.z);
+    pole.position.set(p.x + side, wy(1.2), p.z);
     scene.add(pole);
     const head = new THREE.Mesh(GEO.sphereLo, lampGlow);
     head.scale.setScalar(0.16);
-    head.position.set(p.x + side, 2.45, p.z);
+    head.position.set(p.x + side, wy(2.45), p.z);
     scene.add(head);
     lampGlows.push(head);
     if (idx === 4 || idx === 12) {
       const pl = new THREE.PointLight(0xffb066, 0.55, 16, 2);
-      pl.position.set(p.x + side, 2.3, p.z);
+      pl.position.set(p.x + side, wy(2.3), p.z);
       scene.add(pl);
     }
   });
@@ -846,7 +944,7 @@
   funnel.scale.set(0.28, 0.85, 0.28);
   funnel.position.set(1.0, 1.75, 0);
   ferry.add(funnel);
-  ferry.position.set(start.x - 8.5, 0.02, start.z + 5.2);
+  ferry.position.set(start.x - 8.5, wy(0.02), start.z + 5.2);
   ferry.rotation.y = 0.55;
   scene.add(ferry);
 
@@ -854,25 +952,88 @@
   const startMat = new THREE.MeshStandardMaterial({ color: 0x3de0c8, emissive: 0x0a6655, roughness: 0.35, metalness: 0.25 });
   const endMat = new THREE.MeshStandardMaterial({ color: 0xff5a8a, emissive: 0x771133, roughness: 0.35, metalness: 0.25 });
   const startMarker = new THREE.Mesh(markerGeo, startMat);
-  startMarker.position.set(start.x, 0.18, start.z);
+  startMarker.position.set(start.x, wy(0.18), start.z);
   scene.add(startMarker);
   const endP = PATH[PATH.length - 1];
   const endMarker = new THREE.Mesh(markerGeo, endMat);
-  endMarker.position.set(endP.x, 0.18, endP.z);
+  endMarker.position.set(endP.x, wy(0.18), endP.z);
   scene.add(endMarker);
   const startRing = new THREE.Mesh(GEO.torus, new THREE.MeshStandardMaterial({
     color: 0x5ef0d4, emissive: 0x118866, roughness: 0.3, metalness: 0.25
   }));
   startRing.rotation.x = Math.PI / 2;
-  startRing.position.set(start.x, 0.38, start.z);
+  startRing.position.set(start.x, wy(0.38), start.z);
   startRing.scale.set(1.7, 1.7, 0.35);
   scene.add(startRing);
   const endRing = startRing.clone();
   endRing.material = new THREE.MeshStandardMaterial({
     color: 0xff7a9a, emissive: 0xaa2244, roughness: 0.3, metalness: 0.25
   });
-  endRing.position.set(endP.x, 0.38, endP.z);
+  endRing.position.set(endP.x, wy(0.38), endP.z);
   scene.add(endRing);
+
+  const invadeMats = [];
+  const invadeChevrons = [];
+  let invadeArrow = null;
+  let invadePulse = null;
+  let invadeBeacon = null;
+  function makeInvadeMat(color, emit) {
+    const m = new THREE.MeshStandardMaterial({
+      color: color, emissive: emit || color, emissiveIntensity: 0.5,
+      roughness: 0.32, metalness: 0.22, transparent: true, opacity: 0.92
+    });
+    invadeMats.push(m);
+    return m;
+  }
+  (function buildInvasionHints() {
+    const a = PATH[0], b = PATH[1];
+    const dir = new THREE.Vector3(b.x - a.x, 0, b.z - a.z).normalize();
+    const yaw = Math.atan2(dir.x, dir.z);
+    const arrowMat = makeInvadeMat(0xff4d9a, 0xff2d7a);
+    const chevMat = makeInvadeMat(0x3de0ff, 0x1488ff);
+    invadeArrow = new THREE.Group();
+    const shaft = new THREE.Mesh(GEO.cyl, arrowMat);
+    shaft.rotation.x = Math.PI / 2;
+    shaft.scale.set(0.16, 2.15, 0.16);
+    shaft.position.set(0, 0, 1.1);
+    const head = new THREE.Mesh(GEO.cone, arrowMat);
+    head.rotation.x = Math.PI / 2;
+    head.scale.set(0.52, 1.05, 0.52);
+    head.position.set(0, 0, 2.45);
+    invadeArrow.add(shaft);
+    invadeArrow.add(head);
+    invadeArrow.position.set(a.x + dir.x * 2.4, wy(1.55), a.z + dir.z * 2.4);
+    invadeArrow.rotation.y = yaw;
+    scene.add(invadeArrow);
+
+    invadePulse = new THREE.Mesh(GEO.ring, new THREE.MeshBasicMaterial({
+      color: 0xff4d9a, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false
+    }));
+    invadePulse.rotation.x = -Math.PI / 2;
+    invadePulse.position.set(a.x, wy(0.22), a.z);
+    invadePulse.scale.setScalar(2.1);
+    scene.add(invadePulse);
+
+    invadeBeacon = new THREE.Mesh(GEO.cyl, new THREE.MeshStandardMaterial({
+      color: 0xff4d9a, emissive: 0xff2d7a, emissiveIntensity: 0.65,
+      transparent: true, opacity: 0.2, depthWrite: false
+    }));
+    invadeBeacon.position.set(a.x, wy(1.45), a.z);
+    invadeBeacon.scale.set(0.2, 2.8, 0.2);
+    scene.add(invadeBeacon);
+
+    [0.035, 0.07, 0.11, 0.155, 0.21].forEach(function (u) {
+      const p = pathData.curve.getPoint(u);
+      const tan = pathData.curve.getTangent(u);
+      const chev = new THREE.Mesh(GEO.cone, chevMat);
+      chev.rotation.x = Math.PI / 2;
+      chev.scale.set(0.34, 0.58, 0.34);
+      chev.position.set(p.x, wy(0.42), p.z);
+      chev.rotation.y = Math.atan2(tan.x, tan.z);
+      scene.add(chev);
+      invadeChevrons.push(chev);
+    });
+  })();
 
   const ifcGlass = bldgMat(0xa8c8e4, 0x226688, 0.7);
   addBox(42.8, 12.2, endP.z - 0.6, 3.6, 24.4, 3.6, ifcGlass);
@@ -885,7 +1046,7 @@
   addNeonStrip(40.8, 9, endP.z + 3.8, 10, 0xff4d9a);
 
   const peak = new THREE.Mesh(GEO.cone, new THREE.MeshStandardMaterial({ color: 0x243044, roughness: 1, flatShading: true }));
-  peak.position.set(52, 6.4, endP.z - 12);
+  peak.position.set(52, wy(6.4), endP.z - 12);
   peak.scale.set(7, 14, 6);
   scene.add(peak);
 
@@ -895,7 +1056,7 @@
   const pColors = new Float32Array(PARTICLE_COUNT * 3);
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     pPositions[i * 3] = (Math.random() - 0.5) * (GROUND_SIZE + 40);
-    pPositions[i * 3 + 1] = Math.random() * 22 + 1.2;
+    pPositions[i * 3 + 1] = wy(Math.random() * 22 + 1.2);
     pPositions[i * 3 + 2] = (Math.random() - 0.5) * (GROUND_SIZE + 40);
     const neon = Math.random();
     const c = neon > 0.66 ? new THREE.Color(0x3de0ff) : neon > 0.33 ? new THREE.Color(0xff4d9a) : new THREE.Color(0xffc266);
@@ -1021,11 +1182,33 @@
   const btnSpeed = document.getElementById('btnSpeed');
   const btnStartWave = document.getElementById('btnStartWave');
   const placeHint = document.getElementById('placeHint');
+  const btnUnselect = document.getElementById('btnUnselect');
+  const invadeBanner = document.getElementById('invadeBanner');
+  const waveBox = document.getElementById('wave');
+
+  function syncSelectionUi() {
+    const on = !!(state.selectedTowerType || state.selectedTower);
+    btnUnselect.classList.toggle('show', on);
+  }
 
   function updateHUD() {
     moneyEl.textContent = '$' + Math.floor(state.money);
     livesEl.textContent = String(state.lives);
-    waveEl.textContent = '第 ' + state.wave + ' / ' + TOTAL_WAVES + ' 波';
+    waveBox.classList.toggle('invading', !!state.waveActive);
+    waveBox.classList.toggle('ready', !!(state.running && !state.waveActive && !state.gameOver && state.wave < TOTAL_WAVES));
+    if (state.waveActive) {
+      waveEl.textContent = '第 ' + state.wave + ' / ' + TOTAL_WAVES + ' 波';
+      invadeBanner.classList.add('show');
+    } else {
+      invadeBanner.classList.remove('show');
+      if (state.running && !state.gameOver && state.wave < TOTAL_WAVES) {
+        waveEl.textContent = state.wave === 0
+          ? '第 0 / ' + TOTAL_WAVES + ' 波 · 按 ▶ 出兵'
+          : '第 ' + state.wave + ' / ' + TOTAL_WAVES + ' 波 · 下一波就緒';
+      } else {
+        waveEl.textContent = '第 ' + state.wave + ' / ' + TOTAL_WAVES + ' 波';
+      }
+    }
     document.querySelectorAll('.tower-card').forEach(function (c) {
       const def = TOWER_MAP[c.dataset.id];
       c.classList.toggle('unaffordable', !def || state.money < def.cost);
@@ -1076,10 +1259,11 @@
     document.querySelectorAll('.tower-card').forEach(c => c.classList.toggle('selected', c.dataset.id === id));
     const def = TOWER_MAP[id];
     if (def) {
-      placeHint.textContent = towerTipText(def) + ' · 輕點空地放置 · 拖曳不放置';
+      placeHint.textContent = towerTipText(def) + ' · 輕點空地放置 · 拖曳不放置 · 取消選擇';
     }
     updateGhost(id);
     setPlacingControls(true);
+    syncSelectionUi();
   }
 
   function clearTowerTypeSelection() {
@@ -1089,6 +1273,13 @@
     if (state.rangeMesh) { scene.remove(state.rangeMesh); state.rangeMesh = null; }
     if (state.validDisc) { scene.remove(state.validDisc); state.validDisc = null; }
     setPlacingControls(false);
+    syncSelectionUi();
+  }
+
+  function clearSelection() {
+    state.selectedTower = null;
+    upgradePanel.classList.remove('show');
+    clearTowerTypeSelection();
   }
 
   function meshAt(geo, mat, x, y, z, sx, sy, sz) {
@@ -1390,7 +1581,7 @@
       new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.32, side: THREE.DoubleSide, depthWrite: false })
     );
     ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.12;
+    ring.position.y = wy(0.12);
     ring.visible = false;
     state.rangeMesh = ring;
     scene.add(ring);
@@ -1399,7 +1590,7 @@
       new THREE.MeshBasicMaterial({ color: 0x66ff88, transparent: true, opacity: 0.28, depthWrite: false })
     );
     disc.rotation.x = -Math.PI / 2;
-    disc.position.y = 0.06;
+    disc.position.y = wy(0.06);
     disc.scale.setScalar(1.15);
     disc.visible = false;
     state.validDisc = disc;
@@ -1444,7 +1635,7 @@
 
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
-  const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -MAP_LIFT);
   const _pt = new THREE.Vector3();
   const pointer = {
     down: false, dragging: false, multi: false,
@@ -1465,7 +1656,7 @@
   function isHudEvent(e) {
     const t = e.target;
     if (!t || t === canvas) return false;
-    return !!(t.closest && t.closest('.hud-panel, .overlay, .overlay-btn, .upg-btn, .tower-card, .ctrl-btn, #mobileTip'));
+    return !!(t.closest && t.closest('.hud-panel, .overlay, .overlay-btn, .upg-btn, .tower-card, .ctrl-btn, #mobileTip, #btnUnselect, #invadeBanner'));
   }
 
   function setOrbitFromUi(lock) {
@@ -1480,14 +1671,14 @@
     const { cx, cz } = worldToCell(pt.x, pt.z);
     const w = cellToWorld(cx, cz);
     state.ghostMesh.visible = true;
-    state.ghostMesh.position.set(w.x, 0.5, w.z);
+    state.ghostMesh.position.set(w.x, wy(0.5), w.z);
     if (state.rangeMesh) {
       state.rangeMesh.visible = true;
-      state.rangeMesh.position.set(w.x, 0.12, w.z);
+      state.rangeMesh.position.set(w.x, wy(0.12), w.z);
     }
     if (state.validDisc) {
       state.validDisc.visible = true;
-      state.validDisc.position.set(w.x, 0.06, w.z);
+      state.validDisc.position.set(w.x, wy(0.06), w.z);
     }
     const ok = canPlace(cx, cz) && state.money >= TOWER_MAP[state.selectedTowerType].cost;
     if (state.rangeMesh) state.rangeMesh.material.color.setHex(ok ? 0x88ffaa : 0xff6677);
@@ -1539,9 +1730,7 @@
       const { cx, cz } = worldToCell(pt.x, pt.z);
       tryPlaceTower(cx, cz, state.selectedTowerType);
     } else {
-      state.selectedTower = null;
-      upgradePanel.classList.remove('show');
-      if (state.rangeMesh) state.rangeMesh.visible = false;
+      clearSelection();
     }
   }
 
@@ -1590,7 +1779,7 @@
     if (!canPlace(cx, cz)) return;
     const w = cellToWorld(cx, cz);
     const mesh = makeFruitMesh(def, 1);
-    mesh.position.set(w.x, 0.5, w.z);
+    mesh.position.set(w.x, wy(0.5), w.z);
     mesh.userData.towerRef = null;
     scene.add(mesh);
     const tower = {
@@ -1607,7 +1796,7 @@
     state.towers.push(tower);
     state.occupied.add(cellKey(cx, cz));
     state.money -= def.cost;
-    spawnImpact(new THREE.Vector3(w.x, 0.4, w.z), def.color, 0.7, 5);
+    spawnImpact(new THREE.Vector3(w.x, wy(0.4), w.z), def.color, 0.7, 5);
     updateHUD();
   }
 
@@ -1670,8 +1859,9 @@
       state.rangeMesh.geometry = new THREE.RingGeometry(tower.def.range - 0.18, tower.def.range, 48);
       state.rangeMesh.material.color.setHex(0xffd54a);
     }
-    state.rangeMesh.position.set(tower.mesh.position.x, 0.12, tower.mesh.position.z);
+    state.rangeMesh.position.set(tower.mesh.position.x, wy(0.12), tower.mesh.position.z);
     state.rangeMesh.visible = true;
+    syncSelectionUi();
   }
 
   upgA.addEventListener('click', () => {
@@ -1716,9 +1906,7 @@
     scene.remove(t.mesh);
     state.occupied.delete(cellKey(t.cx, t.cz));
     state.towers = state.towers.filter(x => x !== t);
-    state.selectedTower = null;
-    upgradePanel.classList.remove('show');
-    if (state.rangeMesh) state.rangeMesh.visible = false;
+    clearSelection();
     updateHUD();
   });
 
@@ -1788,7 +1976,7 @@
     r.life = r.maxLife = 0.45;
     r.grow = grow || 9;
     r.mesh.visible = true;
-    r.mesh.position.set(pos.x, 0.14, pos.z);
+    r.mesh.position.set(pos.x, wy(0.14), pos.z);
     r.mesh.scale.setScalar(startScale || 0.6);
     r.mesh.material.color.setHex(color || 0xffffff);
     r.mesh.material.opacity = 0.55;
@@ -1818,7 +2006,7 @@
     if (!def) return;
     const mesh = makeEnemyMesh(def);
     const start = pathCurve.getPoint(0);
-    mesh.position.set(start.x, 0, start.z);
+    mesh.position.set(start.x, wy(0), start.z);
     scene.add(mesh);
     state.enemies.push({
       def, mesh,
@@ -2003,14 +2191,14 @@
       color: 0xff6622, transparent: true, opacity: 0.38, side: THREE.DoubleSide, depthWrite: false
     }));
     mesh.rotation.x = -Math.PI / 2;
-    mesh.position.set(pos.x, 0.15, pos.z);
+    mesh.position.set(pos.x, wy(0.15), pos.z);
     mesh.scale.setScalar(def.burnR || 2.6);
     scene.add(mesh);
     const inner = new THREE.Mesh(GEO.ring, new THREE.MeshBasicMaterial({
       color: 0xffee66, transparent: true, opacity: 0.45, side: THREE.DoubleSide, depthWrite: false
     }));
     inner.rotation.x = -Math.PI / 2;
-    inner.position.set(pos.x, 0.16, pos.z);
+    inner.position.set(pos.x, wy(0.16), pos.z);
     inner.scale.setScalar(def.burnR || 2.6);
     scene.add(inner);
     spawnRing(pos, 0xff8800, (def.burnR || 2.6) * 0.4, 8);
@@ -2224,10 +2412,10 @@
       }
       pathCurve.getPoint(e.progress, _tmp);
       const flyY = e.def.flying ? (2.4 + Math.sin(performance.now() * 0.006 + e.progress * 20) * 0.2) : 0;
-      e.mesh.position.set(_tmp.x, flyY, _tmp.z);
+      e.mesh.position.set(_tmp.x, wy(flyY), _tmp.z);
       const lookT = Math.min(1, e.progress + 0.01);
       pathCurve.getPoint(lookT, _tmp);
-      e.mesh.lookAt(_tmp.x, flyY, _tmp.z);
+      e.mesh.lookAt(_tmp.x, wy(flyY), _tmp.z);
       if (e.mesh.userData.blob) {
         e.mesh.userData.blob.position.y = -flyY + 0.03;
         e.mesh.userData.blob.scale.setScalar((0.55 * e.def.scale) * (e.def.flying ? 0.7 : 1));
@@ -2397,7 +2585,7 @@
     const pos = particles.geometry.attributes.position;
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       let y = pos.getY(i) + dt * 0.55;
-      if (y > 20) y = 1.4;
+      if (y > wy(20)) y = wy(1.4);
       pos.setY(i, y);
     }
     pos.needsUpdate = true;
@@ -2411,6 +2599,40 @@
     }
     if (state.selectedTower && state.rangeMesh && state.rangeMesh.visible) {
       state.rangeMesh.material.opacity = 0.28 + 0.12 * Math.sin(performance.now() * 0.006);
+    }
+    updateInvasionHints();
+  }
+
+  function updateInvasionHints() {
+    const invading = !!state.waveActive;
+    const spawning = invading && state.spawnQueue.length > 0;
+    const t = performance.now();
+    const pulse = 0.5 + 0.5 * Math.sin(t * (spawning ? 0.012 : invading ? 0.007 : 0.0035));
+    if (invadeArrow) {
+      invadeArrow.position.y = wy(1.45 + (invading ? 0.28 * Math.sin(t * 0.006) : 0));
+      if (invadeMats[0]) {
+        invadeMats[0].emissiveIntensity = invading ? 0.55 + pulse * 0.75 : 0.28;
+        invadeMats[0].opacity = invading ? 1 : 0.55;
+      }
+    }
+    if (invadePulse) {
+      const s = (invading ? 2.0 : 1.5) + (invading ? 1.8 : 0.55) * pulse;
+      invadePulse.scale.setScalar(s);
+      invadePulse.material.opacity = invading ? 0.18 + 0.32 * pulse : 0.1;
+      invadePulse.material.color.setHex(spawning ? 0xff4d9a : invading ? 0xff7aa8 : 0x3de0ff);
+    }
+    if (invadeBeacon) {
+      invadeBeacon.material.opacity = invading ? 0.16 + 0.18 * pulse : 0.06;
+      invadeBeacon.material.emissiveIntensity = invading ? 0.55 + pulse * 0.55 : 0.22;
+      invadeBeacon.scale.y = invading ? 3.1 : 2.2;
+    }
+    if (invadeMats[1]) {
+      invadeMats[1].emissiveIntensity = invading ? 0.4 + pulse * 0.7 : 0.16;
+      invadeMats[1].opacity = invading ? 0.95 : 0.38;
+    }
+    for (let i = 0; i < invadeChevrons.length; i++) {
+      const c = invadeChevrons[i];
+      c.position.y = wy(0.38 + (invading ? 0.14 * Math.sin(t * 0.01 + i * 0.9) : 0));
     }
   }
 
@@ -2455,9 +2677,7 @@
     state.spawnQueue = [];
     state.gameOver = false;
     state.won = false;
-    state.selectedTower = null;
-    clearTowerTypeSelection();
-    upgradePanel.classList.remove('show');
+    clearSelection();
     btnSpeed.innerHTML = '<i class="fas fa-forward"></i>';
     btnSpeed.classList.remove('active');
     btnSpeed.title = '速度 1x';
@@ -2504,18 +2724,24 @@
   btnSpeed.addEventListener('click', () => applySpeed(state.speed === 1 ? 2 : 1));
   document.getElementById('btnResetCam').addEventListener('click', () => {
     camera.position.set(CAM0.x, CAM0.y, CAM0.z);
-    controls.target.set(0, 0, -2);
+    controls.target.set(CAM_TARGET.x, CAM_TARGET.y, CAM_TARGET.z);
     controls.update();
+  });
+  btnUnselect.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    clearSelection();
+  });
+  document.getElementById('upgUnselect').addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    clearSelection();
   });
 
   window.addEventListener('keydown', e => {
     if (e.code === 'Space') { e.preventDefault(); startNextWave(); }
     if (e.key === '1' || e.key === '2') applySpeed(e.key === '2' ? 2 : 1);
-    if (e.key === 'Escape') {
-      clearTowerTypeSelection();
-      state.selectedTower = null;
-      upgradePanel.classList.remove('show');
-    }
+    if (e.key === 'Escape') clearSelection();
   });
 
   class BurnZone {
