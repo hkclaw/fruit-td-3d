@@ -163,9 +163,9 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 52px;
-    min-width: 136px;
-    padding: 12px 20px;
+    min-height: 56px;
+    min-width: 148px;
+    padding: 14px 22px;
     border-radius: 14px;
     border: 1px solid rgba(255, 213, 74, 0.55);
     background: rgba(18, 14, 32, 0.88);
@@ -188,7 +188,7 @@
 
   #invadeBanner {
     position: fixed;
-    top: calc(62px + var(--safe-top));
+    top: calc(64px + var(--safe-top));
     left: 50%;
     transform: translateX(-50%);
     z-index: 55;
@@ -196,9 +196,9 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 40px;
-    padding: 8px 18px;
-    font-size: 16px;
+    min-height: 48px;
+    padding: 10px 22px;
+    font-size: 18px;
     font-weight: 900;
     letter-spacing: 2px;
     color: #ffe4ee;
@@ -442,10 +442,10 @@
   scene.fog = new THREE.FogExp2(FOG_COLOR, 0.0088);
 
   const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 520);
-  const MAP_LIFT = 3.6;
+  const MAP_LIFT = 5.2;
   function wy(y) { return MAP_LIFT + (y || 0); }
-  const CAM0 = { x: 20, y: 24, z: 36 };
-  const CAM_TARGET = { x: 0, y: MAP_LIFT, z: -2 };
+  const CAM0 = { x: 14, y: 16.5, z: 28 };
+  const CAM_TARGET = { x: 0, y: MAP_LIFT + 0.35, z: 6 };
   camera.position.set(CAM0.x, CAM0.y, CAM0.z);
   camera.lookAt(CAM_TARGET.x, CAM_TARGET.y, CAM_TARGET.z);
 
@@ -994,41 +994,46 @@
     invadeArrow = new THREE.Group();
     const shaft = new THREE.Mesh(GEO.cyl, arrowMat);
     shaft.rotation.x = Math.PI / 2;
-    shaft.scale.set(0.16, 2.15, 0.16);
-    shaft.position.set(0, 0, 1.1);
+    shaft.scale.set(0.22, 2.8, 0.22);
+    shaft.position.set(0, 0, 1.45);
     const head = new THREE.Mesh(GEO.cone, arrowMat);
     head.rotation.x = Math.PI / 2;
-    head.scale.set(0.52, 1.05, 0.52);
-    head.position.set(0, 0, 2.45);
+    head.scale.set(0.85, 1.55, 0.85);
+    head.position.set(0, 0, 3.25);
     invadeArrow.add(shaft);
     invadeArrow.add(head);
-    invadeArrow.position.set(a.x + dir.x * 2.4, wy(1.55), a.z + dir.z * 2.4);
+    const groundArrow = new THREE.Mesh(GEO.cone, arrowMat);
+    groundArrow.rotation.x = Math.PI / 2;
+    groundArrow.scale.set(1.15, 2.1, 0.16);
+    groundArrow.position.set(0, -1.15, 2.1);
+    invadeArrow.add(groundArrow);
+    invadeArrow.position.set(a.x + dir.x * 2.8, wy(2.15), a.z + dir.z * 2.8);
     invadeArrow.rotation.y = yaw;
     scene.add(invadeArrow);
 
     invadePulse = new THREE.Mesh(GEO.ring, new THREE.MeshBasicMaterial({
-      color: 0xff4d9a, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false
+      color: 0xff4d9a, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false
     }));
     invadePulse.rotation.x = -Math.PI / 2;
-    invadePulse.position.set(a.x, wy(0.22), a.z);
-    invadePulse.scale.setScalar(2.1);
+    invadePulse.position.set(a.x, wy(0.28), a.z);
+    invadePulse.scale.setScalar(3.2);
     scene.add(invadePulse);
 
     invadeBeacon = new THREE.Mesh(GEO.cyl, new THREE.MeshStandardMaterial({
-      color: 0xff4d9a, emissive: 0xff2d7a, emissiveIntensity: 0.65,
-      transparent: true, opacity: 0.2, depthWrite: false
+      color: 0xff4d9a, emissive: 0xff2d7a, emissiveIntensity: 0.85,
+      transparent: true, opacity: 0.28, depthWrite: false
     }));
-    invadeBeacon.position.set(a.x, wy(1.45), a.z);
-    invadeBeacon.scale.set(0.2, 2.8, 0.2);
+    invadeBeacon.position.set(a.x, wy(2.1), a.z);
+    invadeBeacon.scale.set(0.28, 4.0, 0.28);
     scene.add(invadeBeacon);
 
-    [0.035, 0.07, 0.11, 0.155, 0.21].forEach(function (u) {
+    [0.03, 0.065, 0.105, 0.15, 0.20, 0.26].forEach(function (u) {
       const p = pathData.curve.getPoint(u);
       const tan = pathData.curve.getTangent(u);
       const chev = new THREE.Mesh(GEO.cone, chevMat);
       chev.rotation.x = Math.PI / 2;
-      chev.scale.set(0.34, 0.58, 0.34);
-      chev.position.set(p.x, wy(0.42), p.z);
+      chev.scale.set(0.72, 1.35, 0.2);
+      chev.position.set(p.x, wy(0.32), p.z);
       chev.rotation.y = Math.atan2(tan.x, tan.z);
       scene.add(chev);
       invadeChevrons.push(chev);
@@ -2609,30 +2614,30 @@
     const t = performance.now();
     const pulse = 0.5 + 0.5 * Math.sin(t * (spawning ? 0.012 : invading ? 0.007 : 0.0035));
     if (invadeArrow) {
-      invadeArrow.position.y = wy(1.45 + (invading ? 0.28 * Math.sin(t * 0.006) : 0));
+      invadeArrow.position.y = wy(2.05 + (invading ? 0.38 * Math.sin(t * 0.006) : 0.08 * Math.sin(t * 0.003)));
       if (invadeMats[0]) {
-        invadeMats[0].emissiveIntensity = invading ? 0.55 + pulse * 0.75 : 0.28;
-        invadeMats[0].opacity = invading ? 1 : 0.55;
+        invadeMats[0].emissiveIntensity = invading ? 0.7 + pulse * 0.9 : 0.42;
+        invadeMats[0].opacity = invading ? 1 : 0.72;
       }
     }
     if (invadePulse) {
-      const s = (invading ? 2.0 : 1.5) + (invading ? 1.8 : 0.55) * pulse;
+      const s = (invading ? 3.0 : 2.4) + (invading ? 2.4 : 0.8) * pulse;
       invadePulse.scale.setScalar(s);
-      invadePulse.material.opacity = invading ? 0.18 + 0.32 * pulse : 0.1;
+      invadePulse.material.opacity = invading ? 0.28 + 0.38 * pulse : 0.16;
       invadePulse.material.color.setHex(spawning ? 0xff4d9a : invading ? 0xff7aa8 : 0x3de0ff);
     }
     if (invadeBeacon) {
-      invadeBeacon.material.opacity = invading ? 0.16 + 0.18 * pulse : 0.06;
-      invadeBeacon.material.emissiveIntensity = invading ? 0.55 + pulse * 0.55 : 0.22;
-      invadeBeacon.scale.y = invading ? 3.1 : 2.2;
+      invadeBeacon.material.opacity = invading ? 0.22 + 0.2 * pulse : 0.1;
+      invadeBeacon.material.emissiveIntensity = invading ? 0.75 + pulse * 0.6 : 0.35;
+      invadeBeacon.scale.y = invading ? 4.4 : 3.2;
     }
     if (invadeMats[1]) {
-      invadeMats[1].emissiveIntensity = invading ? 0.4 + pulse * 0.7 : 0.16;
-      invadeMats[1].opacity = invading ? 0.95 : 0.38;
+      invadeMats[1].emissiveIntensity = invading ? 0.55 + pulse * 0.85 : 0.28;
+      invadeMats[1].opacity = invading ? 1 : 0.55;
     }
     for (let i = 0; i < invadeChevrons.length; i++) {
       const c = invadeChevrons[i];
-      c.position.y = wy(0.38 + (invading ? 0.14 * Math.sin(t * 0.01 + i * 0.9) : 0));
+      c.position.y = wy(0.3 + (invading ? 0.16 * Math.sin(t * 0.01 + i * 0.9) : 0));
     }
   }
 
@@ -2708,17 +2713,20 @@
     document.getElementById('startScreen').style.display = 'none';
     resetGame();
     state.running = true;
+    updateHUD();
     maybeShowMobileTip();
   });
   document.getElementById('btnWinRestart').addEventListener('click', () => {
     document.getElementById('winScreen').style.display = 'none';
     resetGame();
     state.running = true;
+    updateHUD();
   });
   document.getElementById('btnLoseRestart').addEventListener('click', () => {
     document.getElementById('loseScreen').style.display = 'none';
     resetGame();
     state.running = true;
+    updateHUD();
   });
   btnStartWave.addEventListener('click', startNextWave);
   btnSpeed.addEventListener('click', () => applySpeed(state.speed === 1 ? 2 : 1));
@@ -2776,7 +2784,12 @@
     get wave() { return state.wave; }
   }
   const game = new Game();
-  window.FruitTD = { Game, Tower, Enemy, Projectile, BurnZone, game, TOWER_DEFS, ENEMY_DEFS, WAVES, state };
+  window.FruitTD = {
+    Game, Tower, Enemy, Projectile, BurnZone, game,
+    TOWER_DEFS, ENEMY_DEFS, WAVES, state,
+    clearSelection: clearSelection,
+    selectPlacedTower: selectPlacedTower
+  };
 
   initFxPools();
   buildTowerBar();
