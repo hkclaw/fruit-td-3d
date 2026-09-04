@@ -1356,13 +1356,11 @@
     addBlob(g, 0.55 * s, 0.02);
     const barBg = new THREE.Mesh(GEO.plane, new THREE.MeshBasicMaterial({ color: 0x111318, transparent: true, opacity: 0.78, depthTest: false }));
     barBg.scale.set(1.2 * s, 0.12, 1);
-    barBg.position.y = 1.38 * s;
-    barBg.renderOrder = 10;
+    barBg.position.y = 1.25 * s;
     g.add(barBg);
     const barFg = new THREE.Mesh(GEO.plane, new THREE.MeshBasicMaterial({ color: 0x2ecc71, depthTest: false }));
     barFg.scale.set(1.15 * s, 0.09, 1);
-    barFg.position.set(0, 1.38 * s, 0.01);
-    barFg.renderOrder = 11;
+    barFg.position.set(0, 1.25 * s, 0.01);
     g.add(barFg);
     g.userData.hpBar = barFg;
     g.userData.hpBarBg = barBg;
@@ -1836,16 +1834,14 @@
   }
 
   function damageEnemy(e, raw, opts) {
-    if (!e || !e.alive) return 0;
+    if (!e.alive) return;
     opts = opts || {};
     if (opts.permanentShred) {
       e.armor = Math.max(0, e.armor - (opts.shred || 0.15));
     }
     let armor = e.armor;
     if (e.statuses.shred && e.statuses.shred.t > 0) armor = Math.max(0, armor - e.statuses.shred.amt);
-    const rawN = Number(raw);
-    const incoming = isFinite(rawN) ? rawN : 0;
-    const dmg = Math.max(1, incoming * (1 - armor));
+    const dmg = Math.max(1, raw * (1 - armor));
     e.hp -= dmg;
     e.flashT = 0.08;
     if (e.mesh.userData.flash) e.mesh.userData.flash.visible = true;
@@ -1856,7 +1852,6 @@
     if (opts.knock) e.progress = Math.max(0, e.progress - opts.knock / pathLen);
     updateEnemyHpBar(e);
     if (e.hp <= 0) killEnemy(e);
-    return dmg;
   }
 
   function updateEnemyHpBar(e) {
@@ -2174,13 +2169,6 @@
 
   const _tmp = new THREE.Vector3();
   const _tmp2 = new THREE.Vector3();
-  const _invQ = new THREE.Quaternion();
-
-  function billboardChild(child, parent) {
-    if (!child) return;
-    _invQ.copy(parent.quaternion).invert();
-    child.quaternion.copy(camera.quaternion).premultiply(_invQ);
-  }
 
   function updateEnemies(dt) {
     for (const e of state.enemies) {
@@ -2250,8 +2238,8 @@
         e.mesh.userData.wings[1].rotation.z = -flap;
       }
       if (e.mesh.userData.hpBar) {
-        billboardChild(e.mesh.userData.hpBar, e.mesh);
-        billboardChild(e.mesh.userData.hpBarBg, e.mesh);
+        e.mesh.userData.hpBar.quaternion.copy(camera.quaternion);
+        if (e.mesh.userData.hpBarBg) e.mesh.userData.hpBarBg.quaternion.copy(camera.quaternion);
       }
     }
   }
@@ -2562,11 +2550,7 @@
     get wave() { return state.wave; }
   }
   const game = new Game();
-  window.FruitTD = {
-    Game, Tower, Enemy, Projectile, BurnZone, game,
-    TOWER_DEFS, ENEMY_DEFS, WAVES, state,
-    damageEnemy, spawnEnemy, tryPlaceTower, applyHit, fireTower, startNextWave, updateHUD
-  };
+  window.FruitTD = { Game, Tower, Enemy, Projectile, BurnZone, game, TOWER_DEFS, ENEMY_DEFS, WAVES, state };
 
   initFxPools();
   buildTowerBar();

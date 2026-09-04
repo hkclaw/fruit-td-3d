@@ -66,12 +66,12 @@ GitHub Pages：https://hkclaw.github.io/fruit-td-3d/
 
 明確 **20 波**表，難度遞增；**第 10、20 波**出現 Boss。中毒／燃燒／減速／暈眩／破甲有獨立光環提示。
 
-**傷害（1–3 波）：** 在 `1236749` 已核對投射物／`damageEnemy` 會扣 HP（第 1 波腐爛蘋果 40 HP、蘋果塔 12 傷）。先前「看起來沒掉血」主要是血條跟著敵人 `lookAt` 轉成側向、幾乎看不見；現在血條會對相機廣告牌，並拒絕 `NaN` 傷害。戰鬥公式未改。
+**傷害（1–3 波）：** 在 `1236749` 已核對為 PASS，不是戰鬥公式 bug。Discovery 先前「沒掉血」是塔放在路徑起點（約 `z≈28`）射程外。本分支未改傷害／護甲公式。
 
 ## 技術
 
 - Three.js r128（CDN）+ OrbitControls（單指 ROTATE / 雙指 DOLLY_PAN）
-- 程序化維港水面 shader、黃昏天空球、瀝青／石屎貼圖、指數霧、暖主光 + 冷補光 + 霓虹點光、PCF 軟陰影
+- 程序化維港水面 shader、黃昏天空球、瀝青路帶／石屎人行、指數霧、暖主光 + 冷補光 + 霓虹點光、PCF 軟陰影
 - 粒子／衝擊閃光／濺射環使用物件池，幾何與材質盡量共用
 - Tailwind CDN、Font Awesome
 - 高對比玻璃擬態 HUD；`viewport-fit=cover`、safe-area、100dvh 全螢幕畫布
